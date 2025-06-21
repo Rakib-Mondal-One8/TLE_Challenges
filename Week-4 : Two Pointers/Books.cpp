@@ -40,43 +40,22 @@ int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 ==
 
 void solve()
 {
-    ll n, k;
-    cin >> n >> k;
+    ll n, time;
+    cin >> n >> time;
 
-    vector<ll>a(n), h(n);
+    vector<ll>a(n);
     for (auto& i : a)cin >> i;
-    for (auto& i : h)cin >> i;
 
-
-    vector<int>mark(n, 0);
-    for (int i = 0;i < n - 1;i++)if (h[i] % h[i + 1] == 0)mark[i] = 1;
-
+    ll ans = INT_MIN;
     ll left = 0, right = 0;
-    ll ans = 1;
-    ll cnt = 0;
-    ll tmp = *min_element(a.begin(), a.end());
 
-    if (tmp > k) {
-        cout << 0 << nl;
-        return;
-    }
-    while (right < n - 1) {
-        if (mark[right] == 0) {
-            cnt = 0;
-            right++;
-            left = right;
-            continue;
-        }
-        cnt += a[right];
-        while (left <= right && cnt > k) {
-            cnt -= a[left];
+    for (right = 0;right < n;right++) {
+        time -= a[right];
+        while (left <= right && time < 0) {
+            time += a[left];
             left++;
         }
-        if (cnt + a[right + 1] <= k) {
-            ans = max(ans, right - left + 2);
-        }
-        else ans = max(ans, right - left + 1);
-        right++;
+        ans = max(ans, right - left + 1);
     }
     cout << ans << nl;
 }
@@ -84,7 +63,7 @@ int32_t main()
 {
     fastio();
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();
