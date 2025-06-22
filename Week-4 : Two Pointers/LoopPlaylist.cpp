@@ -40,7 +40,40 @@ int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 ==
 
 void solve()
 {
+    ll n, p;
+    cin >> n >> p;
 
+    vector<ll>a(n);
+    for (auto& i : a)cin >> i;
+
+    ll total = accumulate(a.begin(), a.end(), 0ll);
+    int ans = 0;
+
+    if (p > total) {
+        ll rep = p / total;
+        p = p % (total * rep);
+        ans += (rep * n);
+
+    }
+    vector<ll>b = a;
+    for (auto i : a)b.push_back(i);
+    ll mn = INT_MAX;
+    ll left = 0, right = 0;
+    ll sum = 0;
+    ll idx = 0;
+    for (right = 0;right < b.size();right++) {
+        sum += b[right];
+        while (left <= right && sum >= p) {
+            if (right - left + 1 < mn) {
+                mn = min(mn, right - left + 1);
+                idx = left + 1;
+            }
+            sum -= b[left];
+            left++;
+        }
+    }
+    ans += mn;
+    cout << idx << " " << ans << nl;
 }
 int32_t main()
 {
