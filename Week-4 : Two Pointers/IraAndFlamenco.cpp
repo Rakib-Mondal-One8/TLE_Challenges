@@ -40,45 +40,39 @@ int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 ==
 
 void solve()
 {
-    ll n, p;
-    cin >> n >> p;
+    int n, m;
+    cin >> n >> m;
 
-    vector<ll>a(n);
-    for (auto& i : a)cin >> i;
+    vector<ll>tmp(n);
+    map<int, int>mp;
+    for (auto& i : tmp)cin >> i, mp[i]++;
 
-    ll total = accumulate(a.begin(), a.end(), 0ll);
+    vector<ll>a;
+    for (auto key : mp)a.push_back(key.first);
+
+    vector<ll>pref(a.size() + 1, 0);
+    for (int i = 0;i < a.size();i++)pref[i + 1] = pref[i] + mp[a[i]];
+
     ll ans = 0;
-
-    if (p > total) {
-        ll rep = p / total;
-        p = p % total;
-        ans += (rep * n);
-
-    }
-    ll mn = INT_MAX;
-    ll start = -1;
-    for (int i = 0;i < n;i++) {
-        ll sum = 0;
-        ll cnt = 0;
-        int j = i;
-        while (sum < p) {
-            sum += a[j];
-            cnt++;
-            j = (j + 1) % n;
-        }
-        if (cnt < mn) {
-            mn = cnt;
-            start = i;
+    ll combination = 1;
+    int left = 0, right = 0;
+    for (right = 0;right < a.size();right++) {
+        combination = mod_mul(combination, (pref[right + 1] - pref[right]), mod);
+        if ((right - left + 1) == m) {
+            if ((a[right] - a[left]) < m) {
+                ans = mod_add(ans, combination, mod);
+                combination = mod_div(combination, (pref[left + 1] - pref[left]), mod);
+            }
+            left++;
         }
     }
-    ans += mn;
-    cout << start + 1 << " " << ans << nl;
+    cout << ans << nl;
 }
 int32_t main()
 {
     fastio();
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--)
     {
         solve();
