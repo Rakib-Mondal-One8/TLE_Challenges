@@ -8,7 +8,7 @@ typedef long double lld;
 #define pi pair<int, int>
 #define pll pair<ll, ll>
 #define Yes cout << "YES" << '\n'
-#define No cout << "NO" << '\n'
+#define No cout << "NO" << '\n' 
 #define nl '\n'
 #define loop(i, s, n) for (ll i = s; i <= n; i++)
 #define sz(x) ((int)(x).size())
