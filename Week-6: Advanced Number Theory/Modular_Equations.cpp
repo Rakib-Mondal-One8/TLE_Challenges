@@ -40,21 +40,21 @@ int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 ==
 
 void solve()
 {
-    int n, m;
-    cin >> n >> m;
+    int a, b;
+    cin >> a >> b;
 
-    vector<ll>a(n), b(m);
-    for (auto& i : a)cin >> i;
-    for (auto& i : b)cin >> i;
-
-    ll pre = 0;
-    loop(i, 1, n - 1)pre = __gcd(pre, abs(a[i] - a[0]));
-
-    loop(i, 0, m - 1) {
-        cout << __gcd(a[0] + b[i], pre) << " ";
+    if (a == b) {
+        cout << "infinity" << nl;
+        return;
     }
-    cout << nl;
-
+    int ans = 0;
+    for (int i = 1;i * i <= (a - b);i++) {
+        if ((a - b) % i == 0) {
+            if (i > b)ans++;
+            if ((a - b) / i > b && (a - b) / i != i)ans++;
+        }
+    }
+    cout << ans << nl;
 }
 int32_t main()
 {
