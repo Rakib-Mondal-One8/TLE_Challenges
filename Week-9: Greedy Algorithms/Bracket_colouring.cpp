@@ -12,6 +12,7 @@ typedef long double lld;
 #define No cout << "NO" << '\n'
 #define nl '\n'
 #define loop(i, s, n) for (ll i = s; i <= n; i++)
+#define sz(x) ((int)(x).size())
 using namespace std;
 using namespace __gnu_pbds;
 using namespace chrono;
@@ -29,7 +30,6 @@ using pbdms = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statisti
 void _print(ll t) {cerr << t;}
 void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
-void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
 void _print(double t) {cerr << t;}
 void _print(ull t) {cerr << t;}
@@ -52,21 +52,26 @@ void init_code() {
 #endif
 }
 const ll mod = 1e9 + 7;
-ll inv(ll i) {if (i == 1) return 1; return (mod - ((mod / i) * inv(mod % i)) % mod) % mod;}
-bool isPrime(ll n) {if (n <= 1)return false; if (n <= 3)return true; if (n % 2 == 0 || n % 3 == 0)return false; for (ll i = 5; i * i <= n; i += 6) {if (n % i == 0 || n % (i + 2) == 0)return false;} return true;}
-ll lcm(ll a, ll b) {return (a / __gcd(a, b)) * b;}
-int nXOR(int n) {if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 == 2)return n + 1; return 0;}
+ll expo(ll a, ll b, ll mod) { ll res = 1; while (b > 0) { if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1; } return res; }
+ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
+ll inv(ll i) { if (i == 1) return 1; return (mod - ((mod / i) * inv(mod % i)) % mod) % mod; }
+bool isPrime(ll n) { if (n <= 1)return false; if (n <= 3)return true; if (n % 2 == 0 || n % 3 == 0)return false; for (ll i = 5; i * i <= n; i += 6) { if (n % i == 0 || n % (i + 2) == 0)return false; } return true; }
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
+ll mod_add(ll a, ll b, ll m) { a = a % m; b = b % m; return (((a + b) % m) + m) % m; }
+ll mod_mul(ll a, ll b, ll m) { a = a % m; b = b % m; return (((a * b) % m) + m) % m; }
+ll mod_sub(ll a, ll b, ll m) { a = a % m; b = b % m; return (((a - b) % m) + m) % m; }
+ll mod_div(ll a, ll b, ll m) { a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m; }  //only for prime m
+int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 == 2)return n + 1; return 0; }
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 void solve()
 {
-	int a = 5;
-	debug(a);
-	set<int>s;
-	for (int i = 0; i <= a; i++) s.insert(i);
+	string s = "Rakib Mondal , How are you!! Long time no seee";
+	cout << "Lets Start the CP/DSA Again okay!! Now this time don't break you discipline";
+	cout << s << nl;
 
-	debug(s)
-	cout << a << nl;
+	cout << "You have done so much php and python so you forgot about using semicolon after a line off code" << nl;
+	cout << "Dont worry continue problem solving everything will become easy like before just continue don't quit like the last time okay ??";
 }
 int main()
 {
