@@ -51,7 +51,9 @@ void init_code() {
 	freopen("Error.txt", "w", stderr);
 #endif
 }
-const ll mod = 1e9 + 7;
+// const ll mod = 1e9 + 7;
+// const int mod = 998244353;
+const long long mod = 1375927501846395853LL;
 ll expo(ll a, ll b, ll mod) { ll res = 1; while (b > 0) { if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1; } return res; }
 ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
 ll inv(ll i) { if (i == 1) return 1; return (mod - ((mod / i) * inv(mod % i)) % mod) % mod; }
@@ -64,37 +66,16 @@ ll mod_div(ll a, ll b, ll m) { a = a % m; b = b % m; return (mod_mul(a, mminvpri
 int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 == 2)return n + 1; return 0; }
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
 void solve()
 {
-	string s;
-	cin >> s;
+	int n;
+	cin >> n;
 
-	vector<ll>freq(26, 0);
-	for (auto c : s) {
-		freq[c - 'a']++;
+	ll ans = 0;
+	for (int i = 1; i <= n; i++) {
+		ans += expo(2, i, mod);
 	}
-
-	ll x = s.size();
-	vector<ll>fact(x + 1), inv_fact(x + 1);
-	fact[0] = 1;
-	for (ll i = 1; i <= x; i++) {
-		fact[i] = (fact[i - 1] * i) % mod;
-	}
-	inv_fact[x] = inv(fact[x]);
-	for (ll i = x - 1; i >= 0; i--) {
-		inv_fact[i] = (inv_fact[i + 1] * (i + 1)) % mod;
-	}
-
-	ll demoninator = 1;
-	for (auto val : freq) {
-		demoninator = (demoninator * inv_fact[val]) % mod;
-	}
-
-	cout << (fact[x]*demoninator) % mod << nl;
-
-
-
+	cout << ans << nl;
 }
 int main()
 {

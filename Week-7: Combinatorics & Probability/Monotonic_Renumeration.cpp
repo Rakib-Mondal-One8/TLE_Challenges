@@ -51,7 +51,9 @@ void init_code() {
 	freopen("Error.txt", "w", stderr);
 #endif
 }
-const ll mod = 1e9 + 7;
+// const ll mod = 1e9 + 7;
+const int mod = 998244353;
+// const long long mod = 1375927501846395853LL;
 ll expo(ll a, ll b, ll mod) { ll res = 1; while (b > 0) { if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1; } return res; }
 ll mminvprime(ll a, ll b) { return expo(a, b - 2, b); }
 ll inv(ll i) { if (i == 1) return 1; return (mod - ((mod / i) * inv(mod % i)) % mod) % mod; }
@@ -64,37 +66,51 @@ ll mod_div(ll a, ll b, ll m) { a = a % m; b = b % m; return (mod_mul(a, mminvpri
 int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 == 2)return n + 1; return 0; }
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
 void solve()
 {
-	string s;
-	cin >> s;
+	int n;
+	cin >> n;
 
-	vector<ll>freq(26, 0);
-	for (auto c : s) {
-		freq[c - 'a']++;
+	vector<int>a(n);
+	for (auto &i : a)cin >> i;
+
+	map<int, pi>mp;
+	for (auto i : a)mp[i] = {INT_MAX, INT_MIN};
+
+	for (int i = 0; i < n; i++) {
+		mp[a[i]].first = min(mp[a[i]].first, i);
+		mp[a[i]].second = max(mp[a[i]].second, i);
 	}
 
-	ll x = s.size();
-	vector<ll>fact(x + 1), inv_fact(x + 1);
-	fact[0] = 1;
-	for (ll i = 1; i <= x; i++) {
-		fact[i] = (fact[i - 1] * i) % mod;
+	vector<pi>b;
+	for (auto val : mp)b.push_back(val.second);
+	sort(b.begin(), b.end());
+	debug(b);
+
+	vector<pi>intersection;
+	pi p = b[0];
+	for (int i = 1; i < b.size(); i++) {
+		if (max(b[i].first, p.first) <= min(b[i].second, p.second)) {
+			p.first = min(b[i].first, p.first);
+			p.second =  max(b[i].second, p.second);
+		}
+		else {
+			intersection.push_back(p);
+			p = b[i];
+		}
 	}
-	inv_fact[x] = inv(fact[x]);
-	for (ll i = x - 1; i >= 0; i--) {
-		inv_fact[i] = (inv_fact[i + 1] * (i + 1)) % mod;
+	intersection.push_back(p);
+	debug(intersection)
+
+	ll ans = 1;
+	if (intersection[0].first > 0)ans *= 2;
+
+	for (int i = 1; i < intersection.size(); i++) {
+		int prevElements = intersection[i].first - intersection[i - 1].second - 1;
+		ans = mod_mul(ans, expo(2, prevElements, mod), mod);
+		ans = mod_mul(ans, 2, mod);
 	}
-
-	ll demoninator = 1;
-	for (auto val : freq) {
-		demoninator = (demoninator * inv_fact[val]) % mod;
-	}
-
-	cout << (fact[x]*demoninator) % mod << nl;
-
-
-
+	cout << ans << nl;
 }
 int main()
 {
