@@ -1,1 +1,10 @@
+result 2
+i 2
+result 1
+result 6
+i 3
+result 2
+result 24
+i 4
+result 9
 Time: 0 ms
