@@ -11,45 +11,37 @@ using namespace std;
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 void RakibOne8()
 {
-	string s;
-	cin >> s;
+	int n, c, d;
+	cin >> n >> d >> c;
 
-	vector<int>pos;
-	int op = s.size() / 2, cl = s.size() / 2;
-	for (int i = 0; i < s.size(); i++) {
-		if (s[i] == '(')--op;
-		if (s[i] == ')')--cl;
-		if (s[i] == '?')pos.push_back(i);
-	}
+	set<int>s;
+	vector<int>a(n + 1);
+	int sol = 0;
+	for (int i = 0; i < n; i++) {
+		int x;
+		cin >> x;
 
-	for (int i = 0; i < pos.size(); i++) {
-		if (i < op) {
-			s[pos[i]] = '(';
+		if (s.count(x) == 0) {
+			s.insert(x);
 		}
-		else s[pos[i]] = ')';
+		else sol += d;
 	}
 
-	bool ok = true;
-	auto checkRBS = [&](string s) {
-		int cnt = 0;
-		for (int i = 0; i < s.size(); i++) {
-			if (s[i] == '(')cnt++;
-			else cnt--;
+	int cnt = 0;
+	for (auto x : s)a[++cnt] = x;
 
-			if (cnt < 0)return false;
-		}
-		return cnt == 0;
-	};
-	if (op > 0 && cl > 0) {
-		swap(s[pos[op - 1]], s[pos[op]]);
-		if (checkRBS(s))ok = false;
+	int ans = 2e18;
+
+	for (int i = 1; i <= cnt; i++) {
+		ans = min(ans, (a[i] - i) * c + (cnt - i) * d);
 	}
 
-	cout << ((ok) ? "YES" : "NO") << nl;
+	ans = min(ans, (cnt * d) + c);
+	cout << ans + sol << nl;
 }
 int32_t main()
 {
-	// init_code();
+	init_code();
 	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 	int t = 1;
 	cin >> t;

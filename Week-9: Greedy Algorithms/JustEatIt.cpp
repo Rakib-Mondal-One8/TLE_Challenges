@@ -11,45 +11,37 @@ using namespace std;
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 void RakibOne8()
 {
-	string s;
-	cin >> s;
+	int n;
+	cin >> n;
 
-	vector<int>pos;
-	int op = s.size() / 2, cl = s.size() / 2;
-	for (int i = 0; i < s.size(); i++) {
-		if (s[i] == '(')--op;
-		if (s[i] == ')')--cl;
-		if (s[i] == '?')pos.push_back(i);
-	}
+	vector<int>a(n);
+	for (auto &x : a)cin >> x;
 
-	for (int i = 0; i < pos.size(); i++) {
-		if (i < op) {
-			s[pos[i]] = '(';
+	int total = accumulate(a.begin(), a.end(), 0LL);
+	debug(total);
+
+	int mx = 0;
+	auto go = [&](int start , int end) {
+		int sum = 0;
+		for (int i = start; i <= end; i++) {
+			if (sum + a[i] <= 0) {
+				sum = 0;
+				continue;
+			}
+			sum += a[i];
+			mx = max(mx, sum);
 		}
-		else s[pos[i]] = ')';
-	}
-
-	bool ok = true;
-	auto checkRBS = [&](string s) {
-		int cnt = 0;
-		for (int i = 0; i < s.size(); i++) {
-			if (s[i] == '(')cnt++;
-			else cnt--;
-
-			if (cnt < 0)return false;
-		}
-		return cnt == 0;
 	};
-	if (op > 0 && cl > 0) {
-		swap(s[pos[op - 1]], s[pos[op]]);
-		if (checkRBS(s))ok = false;
-	}
+	go(0, n - 2);
+	go(1, n - 1);
 
-	cout << ((ok) ? "YES" : "NO") << nl;
+	debug(mx);
+	if (mx >= total)cout << "NO" << nl;
+	else cout << "YES" << nl;
 }
 int32_t main()
 {
-	// init_code();
+	init_code();
 	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 	int t = 1;
 	cin >> t;
