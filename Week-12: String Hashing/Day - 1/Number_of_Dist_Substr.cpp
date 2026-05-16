@@ -93,8 +93,8 @@ void solve()
     int n = s.size();
     Hashing hs = Hashing(s);
 
-    for (int i = 0;i < n;i++) {
-        for (int j = i;j < n;j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
             vector<ll>hash = hs.substringHash(i, j);
             unique_subs.insert(hash);
         }
@@ -113,3 +113,5 @@ int32_t main()
     }
     return 0;
 }
+
+ctive
