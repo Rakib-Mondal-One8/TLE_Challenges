@@ -23,6 +23,52 @@ int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 ==
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+struct Hashing {
+	string s;
+	int n;
+	int primes;
+	vector<int> hashPrimes = { 1000000009, 100000007 };
+	const int base = 31;
+	vector<vector<int>> hashValues;
+	vector<vector<int>> powersOfBase;
+	vector<vector<int>> inversePowersOfBase;
+	Hashing(string a) {
+		primes = sz(hashPrimes);
+		hashValues.resize(primes);
+		powersOfBase.resize(primes);
+		inversePowersOfBase.resize(primes);
+		s = a;
+		n = s.length();
+		for (int i = 0; i < sz(hashPrimes); i++) {
+			powersOfBase[i].resize(n + 1);
+			inversePowersOfBase[i].resize(n + 1);
+			powersOfBase[i][0] = 1;
+			for (int j = 1; j <= n; j++) {
+				powersOfBase[i][j] = (base * powersOfBase[i][j - 1]) % hashPrimes[i];
+			}
+			inversePowersOfBase[i][n] = mminvprime(powersOfBase[i][n], hashPrimes[i]);
+			for (int j = n - 1; j >= 0; j--) {
+				inversePowersOfBase[i][j] = mod_mul(inversePowersOfBase[i][j + 1], base, hashPrimes[i]);
+			}
+		}
+		for (int i = 0; i < sz(hashPrimes); i++) {
+			hashValues[i].resize(n);
+			for (int j = 0; j < n; j++) {
+				hashValues[i][j] = ((s[j] - 'a' + 1LL) * powersOfBase[i][j]) % hashPrimes[i];
+				hashValues[i][j] = (hashValues[i][j] + (j > 0 ? hashValues[i][j - 1] : 0LL)) % hashPrimes[i];
+			}
+		}
+	}
+	vector<int> substringHash(int l, int r) {
+		vector<int> hash(primes);
+		for (int i = 0; i < primes; i++) {
+			int val1 = hashValues[i][r];
+			int val2 = l > 0 ? hashValues[i][l - 1] : 0LL;
+			hash[i] = mod_mul(mod_sub(val1, val2, hashPrimes[i]), inversePowersOfBase[i][l], hashPrimes[i]);
+		}
+		return hash;
+	}
+};
 void RakibOne8()
 {
 	string s1, s2;
@@ -35,20 +81,27 @@ void RakibOne8()
 		if (s2[i] == '1')track[i] = 1;
 	}
 
-	set<string>st;
+	Hashing hs = Hashing(s1);
+	vector<vector<int>>ans;
 	for (int i = 0; i < s1.size(); i++) {
 		int cnt = 0;
-		string tmp = "";
 		for (int j = i; j < s1.size(); j++) {
 			if (track[s1[j] - 'a'] == 0)cnt++;
 			if (cnt <= k) {
-				tmp += s1[j];
-				st.insert(tmp);
+				ans.push_back(hs.substringHash(i, j));
 			}
 			else break;
 		}
 	}
-	cout << st.size() << nl;
+
+	sort(ans.begin(), ans.end());
+
+	int cnt = 0;
+	for (int i = 0; i < ans.size(); i++) {
+		if (i > 0 && ans[i] == ans[i - 1])continue;
+		cnt++;
+	}
+	cout << cnt << nl;
 }
 int32_t main()
 {
