@@ -46,7 +46,7 @@ void RakibOne8()
 			}
 		}
 	}
-	debug(dp);
+	// debug(dp);
 	cout << dp[0][1] << nl;
 }
 int32_t main()
