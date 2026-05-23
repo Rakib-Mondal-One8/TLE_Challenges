@@ -29,40 +29,30 @@ int mod_div(int a, int b, int m) { a = a % m; b = b % m; return (mod_mul(a, mmin
 int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 == 2)return n + 1; return 0; }
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 /*_________________________________________________________________________________________________________________________________________________________________________________________________________________________*/
+const int N = 2e5 + 5;
+vector<vector<int>> dp(10, vector<int>(N));
+void go() {
+	for (int i = 0; i <= 9; i++)dp[i][0] = 1;
 
-int go(int x, int m) {
-	x += m;
-	int length = 0;
-	while (x > 0) {
-		x /= 10;
-		length++;
+	for (int i = 1; i < N; i++) {
+		for (int j = 0; j <= 8; j++) {
+			dp[j][i] = dp[j + 1][i - 1];
+		}
+		dp[9][i] = (dp[0][i - 1] + dp[1][i - 1]) % mod;
 	}
-	return length;
 }
 void RakibOne8()
 {
-	int n, m;
-	cin >> n >> m;
+	string s;
+	int m;
+	cin >> s >> m;
+	int ans = 0;
 
-	vector<int>a;
-	while (n > 0) {
-		int lastDigit = n % 10;
-		a.push_back(lastDigit);
-		n /= 10;
-
+	for (auto i : s) {
+		ans = (ans + dp[i - '0'][m]) % mod;
 	}
+	cout << ans << nl;
 
-	int szA = sz(a);
-	vector<int>dp(szA);
-
-	//base
-	dp[szA - 1] = go(a[szA - 1], m);
-
-	for (int i = szA - 2; i >= 0; i--) {
-		dp[i] = (go(a[i], m) + dp[i + 1]) % mod;
-	}
-	debug(dp);
-	cout << dp[0] << nl;
 }
 int32_t main()
 {
@@ -70,6 +60,7 @@ int32_t main()
 	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 	int t = 1;
 	cin >> t;
+	go(); // Pre-computation
 	auto start1 = high_resolution_clock::now();
 	while (t--)
 	{
