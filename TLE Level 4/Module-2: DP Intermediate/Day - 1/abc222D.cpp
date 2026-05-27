@@ -35,35 +35,42 @@ void RakibOne8()
 	int n;
 	cin >> n;
 
-	vector<int>a(n), b(n);
-	for (int i = 0; i < n; i++)cin >> a[i];
-	for (int i = 0; i < n; i++)cin >> b[i];
+	vector<int>a(n + 1), b(n + 1);
 
-
-	debug(a, b);
-
+	for (int i = 1; i <= n; i++)cin >> a[i];
+	for (int i = 1; i <= n; i++)cin >> b[i];
 
 	/*
-	dp[i][j] = total number of non-decreasing sequence from i to n-1
-	such that the previous element is j
+	dp[i][j] = number of non-decreasing sequences that can be made
+	by choosing the ith value as j.
 
-	dp[i][j] = dp[i+1][k] for(int k=max(j,a[i]);k<= b[i];k++) //transition
+	dp[i][j] = sum[i-1][j] + sum[i-1][j-1]+.... sum[i-1][0];
+
+	sum[i][1] = dp[i][1] + sum[i-1][1];
+	sum[i][2] = dp[i][2] + sum[i-1][2];
+	.
+	.
+	.
+	sum[i][j] = dp[i][j] + sum[i-1][j]
 	*/
+
 	vector<vector<int>>dp(n + 1, vector<int>(3005));
+	// vector<vector<int>>sum(n + 1, vector<int>(3005));
 
-	//Base
-	for (int i = 0; i <= 3000; i++)dp[n][i] = 1;
+	for (int j = a[1]; j <= b[1]; j++)dp[1][j] = 1;
 
-	for (int i = n - 1; i >= 0; i--) {
-		for (int j = b[i]; j >= a[i]; j--) {
-			// for (int k = max(j, a[i]); k <= b[i]; k++) {
-			dp[i][j] = (dp[i][j] + dp[i + 1][j]) % mod;
-			// }
+	for (int i = 2; i <= n; i++) {
+		int prefix = 0;
+		for (int j = 0; j <= 3000; j++) {
+			prefix =  (prefix + dp[i - 1][j]) % mod;
+			if (j >= a[i] && j <= b[i])
+				dp[i][j] = prefix;
 		}
 	}
-	debug(dp);
 
-	cout << dp[0][0] << nl;
+	int ans = 0;
+	for (int i = 0; i <= 3000; i++)ans = (ans + dp[n][i]) % mod;
+	cout << ans << nl;
 }
 int32_t main()
 {
