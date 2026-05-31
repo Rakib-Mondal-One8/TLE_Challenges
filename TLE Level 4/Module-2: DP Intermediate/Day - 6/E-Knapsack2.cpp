@@ -32,30 +32,46 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 void RakibOne8()
 {
-	int n;
-	cin >> n;
+	int n, w;
+	cin >> n >> w;
 
-	vector<int>a(n + 1);
-	for (int i = 1; i <= n; i++)cin >> a[i];
+	vector<array<int, 2>>a(n + 1);
+	int totalVal = 0;
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i][0] >> a[i][1];
+		totalVal += a[i][1];
+	}
 
-	vector<vector<int>>dp(n + 2, vector<int>(n + 2));
-	int INF = 1e18;
-	for (int l = n; l >= 1; l--) {
-		for (int r = 1; r <= n; r++) {
-			//Baseb
-			if (r < l)continue;
-			if (l == r) {
-				dp[l][r] = a[l];
-				continue;
-			}
-			int left = a[l] + min(dp[l + 1][r - 1], ( (l <= n - 2) ? dp[l + 2][r] : INF));
-			int right = a[r] + min(((r >= 2) ? dp[l][r - 2] : INF), dp[l + 1][r - 1]);
+	vector<vector<int>>dp(n + 1, vector<int>(totalVal + 1));
+	/*
+	dp[i][val] = minimum weight needed to make val from first i elements
+	*/
 
-			dp[l][r] = max(left, right);
+	//Base
+	for (int i = 0; i <= n; i++)dp[i][0] = 0;
+	for (int i = 1; i <= totalVal; i++)dp[0][i] = 1e10;
+
+	for (int i = 1; i <= n; i++) {
+		for (int val = 1; val <= totalVal; val++) {
+			int pick = a[i][0];
+			if (val < a[i][1])
+				pick += dp[i - 1][0];
+			else pick += dp[i - 1][val - a[i][1]];
+			int skip = dp[i - 1][val];
+
+			dp[i][val] = min(pick, skip);
 		}
 	}
+
 	debug(dp);
-	cout << dp[1][n] << nl;
+
+	int ans = 0;
+	for (int i = 0; i <= totalVal; i++) {
+		if (dp[n][i] <= w)ans = max(ans, i);
+	}
+	cout << ans << nl;
+
+
 }
 int32_t main()
 {
