@@ -14,6 +14,8 @@ void init_code() {
 #endif
 }
 using namespace chrono;
+
+/*_________________________________________________________________________________________________________________________________________________________________________________________________________________________*/
 const int mod = 1e9 + 7;
 int expo(int a, int b, int mod) { int res = 1; while (b > 0) { if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1; } return res; }
 int mminvprime(int a, int b) { return expo(a, b - 2, b); }
@@ -26,63 +28,34 @@ int mod_sub(int a, int b, int m) { a = a % m; b = b % m; return (((a - b) % m) +
 int mod_div(int a, int b, int m) { a = a % m; b = b % m; return (mod_mul(a, mminvprime(b, m), m) + m) % m; }  //only for prime m
 int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 == 2)return n + 1; return 0; }
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*_________________________________________________________________________________________________________________________________________________________________________________________________________________________*/
 
 void RakibOne8()
 {
 	int n;
 	cin >> n;
 
-	vector<int>a(n);
-	for (auto &x : a)cin >> x;
+	vector<int>a(n + 1);
+	for (int i = 1; i <= n; i++)cin >> a[i];
 
-	vector<vector<int>>dp(n + 1, vector<int>(n + 1));
-
-
-
-	/*
-	dp[i][j] = maximum number that can be obtained, from range i to j.
-	*/
-
-	for (int i = n - 1; i >= 0; i--) {
-		for (int j = 0; j < n; j++) {
-
-			if (j < i) {
-				dp[i][j] = 0;
+	vector<vector<int>>dp(n + 2, vector<int>(n + 2));
+	int INF = 1e18;
+	for (int l = n; l >= 1; l--) {
+		for (int r = 1; r <= n; r++) {
+			//Base
+			if (r < l)continue;
+			if (l == r) {
+				dp[l][r] = a[l];
 				continue;
 			}
+			int left = a[l] + min(dp[l + 1][r - 1], ( (l <= n - 2) ? dp[l + 2][r] : INF));
+			int right = a[r] + min(((r >= 2) ? dp[l][r - 2] : INF), dp[l + 1][r - 1]);
 
-			if (j - i <= 1) {
-				dp[i][j] = max(a[i], a[j]);
-				continue;
-			}
-
-			//pick first element
-			int pickFirst;
-			if (a[i + 1] > a[j]) {
-				pickFirst = a[i] + dp[i + 2][j];
-			}
-			else {
-				pickFirst = a[i] + dp[i + 1][j - 1];
-			}
-
-			// pick last element
-
-			int pickLast;
-			if (a[i] > a[j - 1]) {
-				pickLast = a[j] + dp[i + 1][j - 1];
-			}
-			else {
-				pickLast = a[j] + dp[i][j - 2];
-			}
-
-			dp[i][j] = max(pickFirst, pickLast);
+			dp[l][r] = max(left, right);
 		}
 	}
-	cout << dp[0][n - 1] << nl;
-
-
+	debug(dp);
+	cout << dp[1][n] << nl;
 }
 int32_t main()
 {
