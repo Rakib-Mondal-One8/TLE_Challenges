@@ -32,48 +32,69 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 void RakibOne8()
 {
-	int n, w;
-	cin >> n >> w;
+	int k, a, b;
+	cin >> k >> a >> b;
 
-	vector<array<int, 2>>a(n + 1);
-	int totalVal = 0;
-	for (int i = 1; i <= n; i++) {
-		cin >> a[i][0] >> a[i][1];
-		totalVal += a[i][1];
-	}
+	string str;
+	cin >> str;
+	int n = sz(str);
+	debug(k, a, b, n);
 
-	vector<vector<int>>dp(n + 1, vector<int>(totalVal + 1));
+	// int range = (n + 1) / k;
+	// debug(range);
+	// if ((range < a) || (range > b)) {
+	// 	cout << "No solution" << nl;
+	// 	return ;
+	// }
+
+	vector<vector<int>>dp(n + 1, vector<int>(k + 1));
 	/*
-	dp[i][val] = minimum weight needed to make val from first i elements
+	dp[i][j] = number of ways to divide the first i elements into segments such that
+	length of each segment lies b/w a to b
 	*/
 
 	//Base
-	for (int i = 0; i <= n; i++)dp[i][0] = 0;
-	for (int i = 1; i <= totalVal; i++)dp[0][i] = 1e10;
+	dp[0][0] = 1;
+	// const int INF = 1e9;
+	// for (int i = 1; i <= n; i++)dp[i][0] = -INF;
+	// for (int i = 1; i <= k; i++)dp[0][i] = -INF;
+
 
 	for (int i = 1; i <= n; i++) {
-		for (int val = 1; val <= totalVal; val++) {
+		for (int j = 1; j <= k; j++) {
+			for (int len = a; len <= b; len++) {
+				if (i >= len) {
+					dp[i][j] += dp[i - len][j - 1];
+				}
+			}
+		}
+	}
+	debug(dp);
+	if (dp[n][k] == 0) {
+		cout << "No solution" << nl;
+		return ;
+	}
 
-			//Pick
-			int pick = a[i][0];
-			if (val < a[i][1])
-				pick += dp[i - 1][0];
-			else pick += dp[i - 1][val - a[i][1]];
+	vector<string> res;
 
-			//Skip
-			int skip = dp[i - 1][val];
+	int i = n, j = k;
 
-			dp[i][val] = min(pick, skip);
+	while (j > 0) {
+		for (int len = a; len <= b; len++) {
+			if (i >= len && dp[i - len][j - 1]) {
+
+				// last segment is [i-len, i-1]
+				res.push_back(str.substr(i - len, len));
+
+				i -= len;
+				j--;
+				break;
+			}
 		}
 	}
 
-	debug(dp);
-
-	int ans = 0;
-	for (int i = 0; i <= totalVal; i++) {
-		if (dp[n][i] <= w)ans = max(ans, i);
-	}
-	cout << ans << nl;
+	reverse(res.begin(), res.end());
+	for (auto s : res)cout << s << nl;
 
 
 }
