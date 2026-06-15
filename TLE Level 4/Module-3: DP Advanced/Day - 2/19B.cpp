@@ -43,11 +43,9 @@ void RakibOne8()
 	such that stealing time = time;
 	*/
 
-	//Base
-	int totalTime = accumulate(t.begin(), t.end(), 0LL);
-
 	vector<int>next(4005);
 
+	//Base
 	const int INF = 1e18;
 	for (int i = 0; i <= 4000; i++) {
 		if (i >= 2000)next[i] = 0;
