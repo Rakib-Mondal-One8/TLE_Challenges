@@ -32,28 +32,40 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int N = 2e5 + 7;
 const int M = 20;
-vector<vector<int>>edges(N);
-int parents[N][M];
+vector<int> edges[N];
+int Par[N][M];
+int dep[N];
 void dfs(int cur, int parent) {
+	dep[cur] = dep[parent] + 1;
+	Par[cur][0] = parent;
 
-	parents[cur][0] = parent;
-	for (int i = 1; i < M; i++) {
-		parents[cur][i] = parents[parents[cur][i - 1]][i - 1];
+	for (int j = 1; j < M; j++) {
+		Par[cur][j] = Par[Par[cur][j - 1]][j - 1];
 	}
 
 	for (auto child : edges[cur]) {
 		if (child != parent)dfs(child, cur);
 	}
-
 }
 
-int KthBoss(int employee, int k) {
+int LCA(int u, int v) {
+	if (u == v)return u;
+	if (dep[u] < dep[v]) swap(u, v);
 
-	int boss = employee;
+	int diff = dep[u] - dep[v];
+
 	for (int i = 0; i < M; i++) {
-		if ((1 << i) & k) boss = parents[boss][i];
+		if ((diff >> i) & 1) u = Par[u][i]; // lift u to reach the same level as v
 	}
-	return boss;
+
+	for (int i = M - 1; i >= 0; i--) {
+		if (Par[u][i] != Par[v][i]) {
+			u = Par[u][i];
+			v = Par[v][i];
+		}
+	}
+
+	return ((u != v) ? Par[u][0] : u);
 }
 void RakibOne8()
 {
@@ -61,20 +73,19 @@ void RakibOne8()
 	cin >> n >> q;
 
 	for (int i = 2; i <= n; i++) {
-		int x;
-		cin >> x;
+		int p;
+		cin >> p;
 
-		edges[x].push_back(i);
+		edges[p].push_back(i);
 	}
-	dfs(1, 0);
+
+	dfs(1, 0); // Binary Lifting
+
 	while (q--) {
-		int e, k;
-		cin >> e >> k;
+		int u, v;
+		cin >> u >> v;
 
-		int res = KthBoss(e, k);
-		res = res > 0 ? res : -1;
-		cout << res << nl;
-
+		cout << LCA(u, v) << nl;
 	}
 
 }

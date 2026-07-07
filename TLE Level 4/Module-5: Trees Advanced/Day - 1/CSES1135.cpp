@@ -30,51 +30,63 @@ int nXOR(int n) { if (n % 4 == 0)return n; if (n % 4 == 1)return 1; if (n % 4 ==
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 /*_________________________________________________________________________________________________________________________________________________________________________________________________________________________*/
 
-const int N = 2e5 + 7;
+const int N = 2e5 + 1;
 const int M = 20;
-vector<vector<int>>edges(N);
-int parents[N][M];
-void dfs(int cur, int parent) {
+vector<int> edges[N];
+int level[N];
+int Par[N][M];
 
-	parents[cur][0] = parent;
-	for (int i = 1; i < M; i++) {
-		parents[cur][i] = parents[parents[cur][i - 1]][i - 1];
-	}
+void dfs(int cur, int parent) {
+	level[cur] = level[parent] + 1;
+	Par[cur][0] = parent;
+
+	for (int i = 1; i < M; i++)Par[cur][i] = Par[Par[cur][i - 1]][i - 1];
 
 	for (auto child : edges[cur]) {
-		if (child != parent)dfs(child, cur);
+		if (child != parent) {
+			dfs(child, cur);
+		}
 	}
-
 }
 
-int KthBoss(int employee, int k) {
+int LCA(int u, int v) {
+	if (u == v)return u;
+	if (level[u] < level[v])swap(u, v);
 
-	int boss = employee;
-	for (int i = 0; i < M; i++) {
-		if ((1 << i) & k) boss = parents[boss][i];
+	int diff = level[u] - level[v];
+
+	for (int i = M - 1; i >= 0; i--) {
+		if ((diff >> i) & 1) u = Par[u][i];
 	}
-	return boss;
+
+	for (int i = M - 1; i >= 0; i--) {
+		if (Par[u][i] != Par[v][i]) {
+			u = Par[u][i];
+			v = Par[v][i];
+		}
+	}
+
+	return ((u != v) ? Par[u][0] : u);
 }
 void RakibOne8()
 {
 	int n, q;
 	cin >> n >> q;
 
-	for (int i = 2; i <= n; i++) {
-		int x;
-		cin >> x;
+	for (int i = 0; i < n - 1; i++) {
+		int u, v;
+		cin >> u >> v;
 
-		edges[x].push_back(i);
+		edges[u].push_back(v);
+		edges[v].push_back(u);
 	}
 	dfs(1, 0);
+
 	while (q--) {
-		int e, k;
-		cin >> e >> k;
+		int u, v;
+		cin >> u >> v;
 
-		int res = KthBoss(e, k);
-		res = res > 0 ? res : -1;
-		cout << res << nl;
-
+		cout << (level[u] + level[v]) - 2 * level[LCA(u, v)] << nl;
 	}
 
 }
