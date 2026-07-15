@@ -44,75 +44,36 @@ void RakibOne8()
 		edges[v].push_back(u);
 	}
 
-	auto dfs = [&](auto && self, int root, int parent, vector<int>&dist) -> void{
-		dist[root] = dist[parent] + 1;
+	vector<int>subtreeSize(n + 1, 0);
+	vector<int>dp(n + 1);
+	auto dfs = [&](auto && self, int root, int parent, int depth) -> int {
+		subtreeSize[root] = 1;
+		int answer = depth;
+
 		for (auto child : edges[root]) {
 			if (child != parent) {
-				self(self, child, root, dist);
+				answer += self(self, child, root, depth + 1);
+				subtreeSize[root] += subtreeSize[child];
+			}
+		}
+		return answer;
+	};
+
+
+	auto reroot = [&](auto && self, int root, int parent, int ans) ->void{
+		dp[root] = ans;
+
+		for (auto child : edges[root]) {
+			if (child != parent) {
+				int nextResult = (ans + n - 2 * subtreeSize[child]);
+				self(self, child, root, nextResult);
 			}
 		}
 	};
 
-	vector<int>dist1(n + 1);
-	vector<int>dist2(n + 1);
-	vector<int>dist3(n + 1);
+	reroot(reroot, 1, 1, dfs(dfs, 1, 0, 0));
 
-	dfs(dfs, 1, 0, dist1);
-	int x = -1;
-	int mn = INT_MIN;
-	for (int i = 1; i <= n; i++) {
-		if (dist1[i] > mn) {
-			mn = dist1[i];
-			x = i;
-		}
-	}
-	debug(x);
-	debug(dist1);
-
-	dfs(dfs, x, 0, dist2);
-	int y = -1;
-	int diameter = INT_MIN;
-	for (int i = 1; i <= n; i++) {
-		if (dist2[i] > diameter) {
-			diameter = dist2[i];
-			y = i;
-		}
-	}
-	debug(y);
-	debug(dist2);
-
-	dfs(dfs, y, 0, dist3);
-	debug(dist3, diameter);
-
-	int endOneSum = 0;
-	int endTwoSum = 0;
-
-	for (int i = 1; i <= n; i++) {
-		endOneSum += dist2[i] - 1;
-		endTwoSum += dist3[i] - 1;
-	}
-
-	debug(endOneSum, endTwoSum);
-
-	for (int i = 1; i <= n; i++) {
-		int res;
-		// if (dist2[i] == diameter) {
-		// 	cout << endTwoSum << " ";
-		// }
-		// else if (dist3[i] == diameter) {
-		// 	cout << endOneSum << " ";
-		// }
-		// else
-		if (dist2[i] <= dist3[i]) {
-			res = ((n - (dist2[i] + 1)) * dist2[i]);
-			cout << endOneSum -  res << " ";
-		}
-		else {
-			res = ((n - (dist3[i] + 1)) * dist3[i]);
-			cout << endTwoSum -  res << " ";
-		}
-
-	}
+	for (int i = 1; i <= n; i++)cout << dp[i] << " ";
 	cout << nl;
 
 }
